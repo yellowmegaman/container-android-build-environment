@@ -24,7 +24,7 @@
         "type": "shell",
         "inline": [
           "apt-get update",
-          "apt-get install ruby ruby-dev -y",
+          "apt-get install build-essential ruby ruby-dev -y",
 	  "gem install fastlane -v {{user `fastlane_ver`}}"
       ]
     }
