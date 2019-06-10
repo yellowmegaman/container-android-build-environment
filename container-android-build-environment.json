@@ -30,7 +30,7 @@
 	  "gem install fastlane -v {{user `fastlane_ver`}}",
 	  "mkdir -p {{user `android_home`}}",
 	  "curl -o {{user `android_home`}}/sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-{{user `android_ver`}}.zip",
-	  "unzip -q {{user `android_home`}}sdk.zip -d {{user `android_home`}}",
+	  "unzip -q {{user `android_home`}}/sdk.zip -d {{user `android_home`}}",
 	  "rm {{user `android_home`}}/sdk.zip",
 	  "mkdir -p {{user `android_home`}}/licenses",
 	  "echo '24333f8a63b6825ea9c5514f83c2829b004d1fee' | tee {{user `android_home`}}/licenses/android-sdk-license",
