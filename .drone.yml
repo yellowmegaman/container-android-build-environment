@@ -44,7 +44,8 @@ steps:
   environment:
     DOCKER_HOST: tcp://dockerhost:2375
     FROM_IMAGE: "gradle:5.4.1-jdk8"
-    FASTLANE_VERSION: 2.125.2
+    FASTLANE_VERSION: "2.125.2"
+    ANDROID_SDK_VERSION: "4333796"
     PROJECT_NAME: yellowmegaman
     DOCKER_USERNAME:
       from_secret: docker_username
