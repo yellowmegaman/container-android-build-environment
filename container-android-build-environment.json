@@ -25,7 +25,8 @@
       "image": "{{user `from_image`}}",
       "run_command": ["-dit", "--net=host", "{{.Image}}", "/bin/bash"],
       "changes": [
-        "ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/gradle/bin:/opt/kotlinc/bin:/opt/scala/bin:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/{{user `android_bt`}}"
+        "ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/gradle/bin:/opt/kotlinc/bin:/opt/scala/bin:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/{{user `android_bt`}}",
+	"ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
       ]
     }
   ],
