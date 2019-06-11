@@ -38,11 +38,27 @@
     {
         "type": "shell",
         "inline": [
-          "curl -s 'https://get.sdkman.io' | bash",
-          "source /root/.sdkman/bin/sdkman-init.sh",
-          "sdk install scala {{user `scala_ver`}}",
-          "sdk install kotlin {{user `scala_ver`}}",
-          "sdk install gradle {{user `gradle_ver`}}"
+          "curl -Lo /opt/gradle.zip https://services.gradle.org/distributions/gradle-{{user `gradle_ver`}}-bin.zip",
+          "unzip -q /opt/gradle.zip -d /opt",
+	  "rm /opt/gradle.zip",
+          "mv /opt/gradle-{{user `gradle_ver`}} /opt/gradle"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "curl -Lo /opt/kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v{{user `kotlin_ver`}}/kotlin-compiler-{{user `kotlin_ver`}}.zip",
+          "unzip -q /opt/kotlin.zip -d /opt",
+          "rm /opt/kotlin.zip"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "curl -Lo /opt/scala.tgz https://downloads.lightbend.com/scala/{{user `scala_ver`}}/scala-{{user `scala_ver`}}.tgz",
+          "tar xf /opt/scala.tgz -C /opt",
+          "rm /opt/scala.tgz",
+          "mv /opt/scala-{{user `scala_ver`}} /opt/scala"
         ]
     },
     {
