@@ -38,12 +38,6 @@
     {
         "type": "shell",
         "inline": [
-	  "gem install fastlane -v {{user `fastlane_ver`}}"
-        ]
-    },
-    {
-        "type": "shell",
-        "inline": [
           "bash",
           "curl -s 'https://get.sdkman.io' | bash",
           "source /root/.sdkman/bin/sdkman-init.sh"
@@ -55,6 +49,12 @@
           "sdk install scala {{user `scala_ver`}}",
           "sdk install kotlin {{user `scala_ver`}}",
           "sdk install gradle {{user `gradle_ver`}}"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "gem install fastlane -v {{user `fastlane_ver`}}"
         ]
     },
     {
