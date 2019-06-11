@@ -7,15 +7,15 @@
     "kotlin_ver":      "{{env `KOTLIN_VERSION`}}",
     "scala_ver":       "{{env `SCALA_VERSION`}}",
     "android_sdk_ver": "{{env `ANDROID_SDK_VERSION`}}",
-    "android_ver":     "{{env `ANDROID_VERSION`}}"
-    "android_bt":      "{{env `ANDROID_BUILD_TOOLS_VERSION`}}"
+    "android_ver":     "{{env `ANDROID_VERSION`}}",
+    "android_bt":      "{{env `ANDROID_BUILD_TOOLS_VERSION`}}",
     "android_home":    "{{env `ANDROID_HOME`}}",
     "project_name":    "{{env `PROJECT_NAME`}}",
     "docker_username": "{{env `DOCKER_USERNAME`}}",
     "docker_password": "{{env `DOCKER_PASSWORD`}}",
     "quay_username":   "{{env `QUAY_USERNAME`}}",
     "quay_password":   "{{env `QUAY_PASSWORD`}}",
-    "tag":             "{{env `NOMAD_VERSION`}}"
+    "tag":             "{{env `ANDROID_BUILD_TOOLS_VERSION`}}"
   },
   "sensitive-variables": ["docker_username", "docker_password", "quay_username", "quay_password"],
   "builders":[
