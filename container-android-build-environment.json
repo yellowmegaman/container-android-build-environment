@@ -44,7 +44,7 @@
     {
         "type": "shell",
         "inline": [
-          "curl -s "https://get.sdkman.io" | bash",
+          "curl -s 'https://get.sdkman.io' | bash",
           "sdk install scala {{user `scala_ver`}}",
           "sdk install kotlin {{user `scala_ver`}}",
           "sdk install gradle {{user `gradle_ver`}}"
