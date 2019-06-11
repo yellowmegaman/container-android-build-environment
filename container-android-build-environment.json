@@ -3,8 +3,13 @@
     "app":             "{{env `DRONE_REPO_NAME`}}",
     "from_image":      "{{env `FROM_IMAGE`}}",
     "fastlane_ver":    "{{env `FASTLANE_VERSION`}}",
-    "android_ver":     "{{env `ANDROID_SDK_VERSION`}}",
-    "android_home":    "/usr/local/android-sdk",
+    "gradle_ver":      "{{env `GRADLE_VERSION`}}",
+    "kotlin_ver":      "{{env `KOTLIN_VERSION`}}",
+    "scala_ver":       "{{env `SCALA_VERSION`}}",
+    "android_sdk_ver": "{{env `ANDROID_SDK_VERSION`}}",
+    "android_ver":     "{{env `ANDROID_VERSION`}}"
+    "android_bt":      "{{env `ANDROID_BUILD_TOOLS_VERSION`}}"
+    "android_home":    "{{env `ANDROID_HOME`}}",
     "project_name":    "{{env `PROJECT_NAME`}}",
     "docker_username": "{{env `DOCKER_USERNAME`}}",
     "docker_password": "{{env `DOCKER_PASSWORD`}}",
@@ -25,18 +30,38 @@
     {
         "type": "shell",
         "inline": [
+	  "dpkg --add-architecture i386",
           "apt-get update",
-          "apt-get install build-essential ruby ruby-dev unzip -y",
+          "apt-get install build-essential ruby ruby-dev unzip libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 qt5-default git wget -y"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
 	  "gem install fastlane -v {{user `fastlane_ver`}}",
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "curl -s "https://get.sdkman.io" | bash",
+          "sdk install scala {{user `scala_ver`}}",
+          "sdk install kotlin {{user `scala_ver`}}",
+          "sdk install gradle {{user `gradle_ver`}}"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
 	  "mkdir -p {{user `android_home`}}",
-	  "curl -o {{user `android_home`}}/sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-{{user `android_ver`}}.zip",
+	  "curl -o {{user `android_home`}}/sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-{{user `android_sdk_ver`}}.zip",
 	  "unzip -q {{user `android_home`}}/sdk.zip -d {{user `android_home`}}",
 	  "rm {{user `android_home`}}/sdk.zip",
 	  "mkdir -p {{user `android_home`}}/licenses",
 	  "echo '24333f8a63b6825ea9c5514f83c2829b004d1fee' | tee {{user `android_home`}}/licenses/android-sdk-license",
 	  "yes | {{user `android_home`}}/tools/bin/sdkmanager --licenses",
 	  "{{user `android_home`}}/tools/bin/sdkmanager --update"
-      ]
+        ]
     }
   ],
   "post-processors": [
