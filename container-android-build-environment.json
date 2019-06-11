@@ -38,7 +38,7 @@
     {
         "type": "shell",
         "inline": [
-	  "gem install fastlane -v {{user `fastlane_ver`}}",
+	  "gem install fastlane -v {{user `fastlane_ver`}}"
         ]
     },
     {
