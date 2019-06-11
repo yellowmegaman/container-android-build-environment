@@ -77,7 +77,8 @@
 	  "mkdir -p {{user `android_home`}}/licenses",
 	  "echo '24333f8a63b6825ea9c5514f83c2829b004d1fee' | tee {{user `android_home`}}/licenses/android-sdk-license",
 	  "yes | {{user `android_home`}}/tools/bin/sdkmanager --licenses",
-	  "{{user `android_home`}}/tools/bin/sdkmanager --update"
+	  "{{user `android_home`}}/tools/bin/sdkmanager --update",
+	  "{{user `android_home`}}/tools/bin/sdkmanager 'build-tools;{{user `android_bt`}}' 'platforms;android-{{user `android_ver`}}' 'platform-tools'"
         ]
     }
   ],
