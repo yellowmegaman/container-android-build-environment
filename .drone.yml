@@ -1,3 +1,4 @@
+---
 kind: pipeline
 name: android-old
 
@@ -65,6 +66,7 @@ steps:
   - packer build "$DRONE_REPO_NAME"-old.json
 
 
+---
 kind: pipeline
 name: android-new
 
