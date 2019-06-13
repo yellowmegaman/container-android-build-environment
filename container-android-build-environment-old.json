@@ -48,7 +48,7 @@
         "inline": [
 	  "dpkg --add-architecture i386",
           "apt-get update",
-          "apt-get install build-essential ruby ruby-dev unzip libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 qt5-default git wget -y"
+          "apt-get install build-essential ruby ruby-dev unzip libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 git wget -y"
         ]
     },
     {

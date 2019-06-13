@@ -1,0 +1,147 @@
+{
+  "variables": {
+    "app":             "{{env `DRONE_REPO_NAME`}}",
+    "from_image":      "{{env `FROM_IMAGE`}}",
+    "fastlane_ver":    "{{env `FASTLANE_VERSION`}}",
+    "gradle_ver":      "{{env `GRADLE_VERSION`}}",
+    "kotlin_ver":      "{{env `KOTLIN_VERSION`}}",
+    "android_sdk_ver": "{{env `ANDROID_SDK_VERSION`}}",
+    "android_ver":     "{{env `ANDROID_VERSION`}}",
+    "android_bt":      "{{env `ANDROID_BUILD_TOOLS_VERSION`}}",
+    "android_home":    "{{env `ANDROID_HOME`}}",
+    "project_name":    "{{env `PROJECT_NAME`}}",
+    "docker_username": "{{env `DOCKER_USERNAME`}}",
+    "docker_password": "{{env `DOCKER_PASSWORD`}}",
+    "quay_username":   "{{env `QUAY_USERNAME`}}",
+    "quay_password":   "{{env `QUAY_PASSWORD`}}",
+    "tag":             "{{env `ANDROID_BUILD_TOOLS_VERSION`}}"
+  },
+  "sensitive-variables": ["docker_username", "docker_password", "quay_username", "quay_password"],
+  "builders":[
+    {
+      "type": "docker",
+      "commit": true,
+      "image": "{{user `from_image`}}",
+      "run_command": ["-dit", "--net=host", "{{.Image}}", "/bin/bash"],
+      "changes": [
+        "ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/gradle/bin:/opt/kotlinc/bin:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/{{user `android_bt`}}",
+	"ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+        "type": "shell",
+        "inline": [
+	  "apt-get update",
+	  "apt-get install -y apt-transport-https",
+	  "echo 'deb https://dl.bintray.com/sbt/debian /' | tee -a /etc/apt/sources.list.d/sbt.list",
+	  "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823",
+	  "apt-get update",
+	  "apt-get install sbt -y",
+	  "apt-get clean"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+	  "dpkg --add-architecture i386",
+          "apt-get update",
+          "apt-get install build-essential ruby ruby-dev unzip libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 git wget -y"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "curl -Lo /opt/gradle.zip https://services.gradle.org/distributions/gradle-{{user `gradle_ver`}}-bin.zip",
+          "unzip -q /opt/gradle.zip -d /opt",
+	  "rm /opt/gradle.zip",
+          "mv /opt/gradle-{{user `gradle_ver`}} /opt/gradle"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "curl -Lo /opt/kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v{{user `kotlin_ver`}}/kotlin-compiler-{{user `kotlin_ver`}}.zip",
+          "unzip -q /opt/kotlin.zip -d /opt",
+          "rm /opt/kotlin.zip"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "gem install fastlane -v {{user `fastlane_ver`}}"
+        ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+	  "mkdir -p {{user `android_home`}}",
+	  "curl -o {{user `android_home`}}/sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-{{user `android_sdk_ver`}}.zip",
+	  "unzip -q {{user `android_home`}}/sdk.zip -d {{user `android_home`}}",
+	  "rm {{user `android_home`}}/sdk.zip",
+	  "mkdir -p {{user `android_home`}}/licenses",
+	  "echo '24333f8a63b6825ea9c5514f83c2829b004d1fee' | tee {{user `android_home`}}/licenses/android-sdk-license",
+	  "yes | {{user `android_home`}}/tools/bin/sdkmanager --licenses",
+	  "{{user `android_home`}}/tools/bin/sdkmanager --update",
+	  "{{user `android_home`}}/tools/bin/sdkmanager 'build-tools;{{user `android_bt`}}' 'platforms;android-{{user `android_ver`}}' 'platform-tools'"
+        ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "docker.io/{{user `project_name`}}/{{user `app`}}",
+        "tag": "{{user `tag`}}"
+      },
+      {
+        "type": "docker-push",
+        "login": true,
+        "login_username": "{{user `docker_username`}}",
+        "login_password": "{{user `docker_password`}}"
+      }
+    ],
+    [
+      {
+        "type": "docker-tag",
+        "repository": "docker.io/{{user `project_name`}}/{{user `app`}}",
+        "tag": "latest"
+      },
+      {
+        "type": "docker-push",
+        "login": true,
+        "login_username": "{{user `docker_username`}}",
+        "login_password": "{{user `docker_password`}}"
+      }
+    ],
+    [
+      {
+        "type": "docker-tag",
+        "repository": "quay.io/{{user `project_name`}}/{{user `app`}}",
+        "tag": "{{user `tag`}}"
+      },
+      {
+        "type": "docker-push",
+        "login": true,
+        "login_server": "quay.io",
+        "login_username": "{{user `quay_username`}}",
+        "login_password": "{{user `quay_password`}}"
+      }
+    ],
+    [
+      {
+        "type": "docker-tag",
+        "repository": "quay.io/{{user `project_name`}}/{{user `app`}}",
+        "tag": "latest"
+      },
+      {
+        "type": "docker-push",
+        "login": true,
+        "login_server": "quay.io",
+        "login_username": "{{user `quay_username`}}",
+        "login_password": "{{user `quay_password`}}"
+      }
+    ]
+  ]
+}

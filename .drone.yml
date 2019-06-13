@@ -1,5 +1,72 @@
 kind: pipeline
-name: android-b-env
+name: android-old
+
+steps:
+
+- name: the more you know
+  image: alpine:3.8
+  commands:
+  - env | sort
+
+- name: check for accidentally dropped creds
+  image: yellowmegaman/container-trufflehog:2.0.98
+  commands:
+  - /usr/local/bin/trufflehog --regex --entropy=False file:///$CI_WORKSPACE
+
+- name: dockerhost
+  image: alpine:3.8
+  environment:
+    DOCKER_REMOTE_HOST:
+      from_secret: docker_remote_host
+    DOCKER_REMOTE_PORT:
+      from_secret: docker_remote_port
+    DOCKER_REMOTE_USER:
+      from_secret: docker_remote_user
+    DOCKER_REMOTE_KEY:
+      from_secret: docker_remote_key
+  commands:
+  - apk add --no-cache openssh-client
+  - mkdir -p /root/.ssh
+  - echo -n "$${DOCKER_REMOTE_KEY}" | base64 -d &> /root/.ssh/id_rsa
+  - chmod 700 /root/.ssh
+  - chmod 600 /root/.ssh/id_rsa
+  - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -N -L 0.0.0.0:2375:127.0.0.1:2375 $DOCKER_REMOTE_USER@$DOCKER_REMOTE_HOST -p $DOCKER_REMOTE_PORT
+  detach: true
+
+- name: check-dockerhost
+  image: alpine:3.8
+  commands:
+  - sleep $(shuf -i1-10 -n1)
+  - nc -zv dockerhost 2375
+
+- name: pack
+  image: yellowmegaman/container-packer:1.3.3
+  environment:
+    DOCKER_HOST: tcp://dockerhost:2375
+    FROM_IMAGE: "quay.io/yellowmegaman/container-openjdk:stretch-jdk8"
+    ANDROID_HOME: "/opt/android-sdk"
+    GRADLE_VERSION: "4.10.3"
+    KOTLIN_VERSION: "1.3.21"
+    SCALA_VERSION: "2.11.11"
+    FASTLANE_VERSION: "2.125.2"
+    ANDROID_SDK_VERSION: "4333796"
+    ANDROID_VERSION: "28"
+    ANDROID_BUILD_TOOLS_VERSION: "28.0.3"
+    PROJECT_NAME: yellowmegaman
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    QUAY_USERNAME:
+      from_secret: quay_username
+    QUAY_PASSWORD:
+      from_secret: quay_password
+  commands:
+  - packer build "$DRONE_REPO_NAME"-old.json
+
+
+kind: pipeline
+name: android-new
 
 steps:
 
@@ -47,7 +114,6 @@ steps:
     ANDROID_HOME: "/opt/android-sdk"
     GRADLE_VERSION: "5.4.1"
     KOTLIN_VERSION: "1.3.21"
-    SCALA_VERSION: "2.12.8"
     FASTLANE_VERSION: "2.125.2"
     ANDROID_SDK_VERSION: "4333796"
     ANDROID_VERSION: "29"
@@ -62,4 +128,4 @@ steps:
     QUAY_PASSWORD:
       from_secret: quay_password
   commands:
-  - packer build "$DRONE_REPO_NAME".json
+  - packer build "$DRONE_REPO_NAME"-new.json
