@@ -15,7 +15,7 @@
     "docker_password": "{{env `DOCKER_PASSWORD`}}",
     "quay_username":   "{{env `QUAY_USERNAME`}}",
     "quay_password":   "{{env `QUAY_PASSWORD`}}",
-    "tag":             "{{env `ANDROID_BUILD_TOOLS_VERSION`}}"
+    "tag":             "old{{env `ANDROID_BUILD_TOOLS_VERSION`}}"
   },
   "sensitive-variables": ["docker_username", "docker_password", "quay_username", "quay_password"],
   "builders":[
