@@ -2,7 +2,6 @@
   "variables": {
     "app":             "{{env `DRONE_REPO_NAME`}}",
     "from_image":      "{{env `FROM_IMAGE`}}",
-    "fastlane_ver":    "{{env `FASTLANE_VERSION`}}",
     "gradle_ver":      "{{env `GRADLE_VERSION`}}",
     "kotlin_ver":      "{{env `KOTLIN_VERSION`}}",
     "android_sdk_ver": "{{env `ANDROID_SDK_VERSION`}}",
@@ -45,9 +44,8 @@
     {
         "type": "shell",
         "inline": [
-	  "dpkg --add-architecture i386",
           "apt-get update",
-          "apt-get install build-essential ruby ruby-dev unzip libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 git wget -y"
+          "apt-get install unzip git wget -y"
         ]
     },
     {
@@ -65,12 +63,6 @@
           "curl -Lo /opt/kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v{{user `kotlin_ver`}}/kotlin-compiler-{{user `kotlin_ver`}}.zip",
           "unzip -q /opt/kotlin.zip -d /opt",
           "rm /opt/kotlin.zip"
-        ]
-    },
-    {
-        "type": "shell",
-        "inline": [
-          "gem install fastlane -v {{user `fastlane_ver`}}"
         ]
     },
     {
